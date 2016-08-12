@@ -8,7 +8,6 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 var routes = require('./routes/index');
-var users = require('./routes/users');
 var DB = require('./db/db');
 
 var app = express();
@@ -31,7 +30,6 @@ var api = require('./routes/api')(db);
     app.use(express.static(path.join(__dirname, 'public')));
 
     app.use('/', routes);
-    app.use('/users', users);
     app.use('/api', api);
 
     db.connect().then(function () {
