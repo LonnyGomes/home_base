@@ -5,6 +5,7 @@ var Q = require('q');
 var db;
 
 var tempDeviceSchema = mongoose.Schema({
+    timeStamp: { type: Date, default: Date.now },
     deviceName: String,
     temperature: Number,
     humidity: Number
@@ -20,7 +21,7 @@ function saveTemp(data) {
 
     td.save(function (err, d) {
         if (err) {
-            defer.reject(err);
+            defer.reject('Failed to save temperature:' + err);
         } else {
             defer.resolve(d);
         }
