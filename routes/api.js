@@ -21,11 +21,11 @@ module.exports = function (db) {
         }).then(function (d) {
             result.status = true;
             result.msg = 'success';
-            res.send(JSON.stringify(result));
+            res.jsonp(result);
         }, function (err) {
             result.msg = err;
             console.error('Error saving temp:' + err);
-            res.send(JSON.stringify(result));
+            res.jsonp(result);
         });
     });
 
