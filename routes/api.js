@@ -41,14 +41,13 @@ module.exports = function (db) {
             callback = function (err, docs) {
                 if (err) {
                     result.msg = err;
-                    res.send(JSON.stringify(result));
+                    res.jsonp(result);
                 } else {
                     result.status = true;
                     result.data = docs;
-                    res.send(JSON.stringify(result));
+                    res.jsonp(result);
                 }
             };
-
 
         TemperatureDevice.find({
             deviceName: params.deviceName,
@@ -56,7 +55,9 @@ module.exports = function (db) {
                 $gte: startTime.toDate(),
                 $lte: endTime.toDate()
             }
-        }).exec(callback);
+        })
+            .sort({timeStamp: 1})
+            .exec(callback);
     });
 
     return router;
