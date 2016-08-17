@@ -60,5 +60,36 @@ module.exports = function (db) {
             .exec(callback);
     });
 
+    router.get('/list/temperature/day/:deviceName', function (req, res) {
+        var params = req.params,
+            result = {
+                status: false,
+                msg: ''
+            },
+            endTime = moment().startOf('day'),
+            startTime = moment().startOf('day').subtract(1, 'days'),
+            TemperatureDevice = new db.models.TemperatureDevice(),
+            callback = function (err, docs) {
+                if (err) {
+                    result.msg = err;
+                    res.jsonp(result);
+                } else {
+                    result.status = true;
+                    result.data = docs;
+                    res.jsonp(result);
+                }
+            };
+
+        TemperatureDevice.find({
+            deviceName: params.deviceName,
+            timeStamp: {
+                $gte: startTime.toDate(),
+                $lte: endTime.toDate()
+            }
+        })
+            .sort({timeStamp: 1})
+            .exec(callback);
+    });
+
     return router;
 };
