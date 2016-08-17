@@ -6,6 +6,35 @@ module.exports = function (db) {
         router = express.Router(),
         moment = require('moment');
 
+    function listRequestHandler(req, res, startTime, endTime) {
+        var params = req.params,
+            result = {
+                status: false,
+                msg: ''
+            },
+            TemperatureDevice = new db.models.TemperatureDevice(),
+            callback = function (err, docs) {
+                if (err) {
+                    result.msg = err;
+                    res.jsonp(result);
+                } else {
+                    result.status = true;
+                    result.data = docs;
+                    res.jsonp(result);
+                }
+            };
+
+        TemperatureDevice.find({
+            deviceName: params.deviceName,
+            timeStamp: {
+                $gte: startTime.toDate(),
+                $lte: endTime.toDate()
+            }
+        })
+            .sort({timeStamp: 1})
+            .exec(callback);
+    }
+
     /* GET users listing. */
     router.get('/temperature/:name/:temperature/:humidity', function (req, res) {
         var params = req.params,
@@ -30,65 +59,17 @@ module.exports = function (db) {
     });
 
     router.get('/list/temperature/hour/:deviceName', function (req, res) {
-        var params = req.params,
-            result = {
-                status: false,
-                msg: ''
-            },
-            endTime = moment().startOf('hour'),
-            startTime = moment().startOf('hour').subtract(1, 'hours'),
-            TemperatureDevice = new db.models.TemperatureDevice(),
-            callback = function (err, docs) {
-                if (err) {
-                    result.msg = err;
-                    res.jsonp(result);
-                } else {
-                    result.status = true;
-                    result.data = docs;
-                    res.jsonp(result);
-                }
-            };
+        var endTime = moment().startOf('hour'),
+            startTime = moment().startOf('hour').subtract(1, 'hours');
 
-        TemperatureDevice.find({
-            deviceName: params.deviceName,
-            timeStamp: {
-                $gte: startTime.toDate(),
-                $lte: endTime.toDate()
-            }
-        })
-            .sort({timeStamp: 1})
-            .exec(callback);
+        listRequestHandler(req, res, startTime, endTime);
     });
 
     router.get('/list/temperature/day/:deviceName', function (req, res) {
-        var params = req.params,
-            result = {
-                status: false,
-                msg: ''
-            },
-            endTime = moment().startOf('day'),
-            startTime = moment().startOf('day').subtract(1, 'days'),
-            TemperatureDevice = new db.models.TemperatureDevice(),
-            callback = function (err, docs) {
-                if (err) {
-                    result.msg = err;
-                    res.jsonp(result);
-                } else {
-                    result.status = true;
-                    result.data = docs;
-                    res.jsonp(result);
-                }
-            };
+        var endTime = moment().startOf('day'),
+            startTime = moment().startOf('day').subtract(1, 'days');
 
-        TemperatureDevice.find({
-            deviceName: params.deviceName,
-            timeStamp: {
-                $gte: startTime.toDate(),
-                $lte: endTime.toDate()
-            }
-        })
-            .sort({timeStamp: 1})
-            .exec(callback);
+        listRequestHandler(req, res, startTime, endTime);
     });
 
     return router;
