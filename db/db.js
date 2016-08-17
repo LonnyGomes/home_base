@@ -52,7 +52,12 @@ function init(dbUrl) {
         connect: function () {
             return defer.promise;
         },
-        saveTemp: saveTemp
+        saveTemp: saveTemp,
+        models: {
+            TemperatureDevice: function () {
+                return mongoose.model('TemperatureDevice', tempDeviceSchema);
+            }
+        }
     };
 }
 
