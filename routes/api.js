@@ -65,9 +65,37 @@ module.exports = function (db) {
         listRequestHandler(req, res, startTime, endTime);
     });
 
+    router.get('/list/current/temperature/hour/:deviceName', function (req, res) {
+        var endTime = moment().startOf('minute'),
+            startTime = moment().startOf('minute').subtract(1, 'hours');
+
+        listRequestHandler(req, res, startTime, endTime);
+    });
+
     router.get('/list/temperature/day/:deviceName', function (req, res) {
         var endTime = moment().startOf('day'),
             startTime = moment().startOf('day').subtract(1, 'days');
+
+        listRequestHandler(req, res, startTime, endTime);
+    });
+
+    router.get('/list/current/temperature/day/:deviceName', function (req, res) {
+        var endTime = moment().startOf('minute'),
+            startTime = moment().startOf('minute').subtract(1, 'days');
+
+        listRequestHandler(req, res, startTime, endTime);
+    });
+
+    router.get('/list/temperature/week/:deviceName', function (req, res) {
+        var endTime = moment().startOf('day'),
+            startTime = moment().startOf('day').subtract(1, 'weeks');
+
+        listRequestHandler(req, res, startTime, endTime);
+    });
+
+    router.get('/list/current/temperature/week/:deviceName', function (req, res) {
+        var endTime = moment().startOf('minute'),
+            startTime = moment().startOf('minute').subtract(1, 'weeks');
 
         listRequestHandler(req, res, startTime, endTime);
     });
