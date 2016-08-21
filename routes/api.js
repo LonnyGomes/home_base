@@ -6,7 +6,7 @@ module.exports = function (db) {
         router = express.Router(),
         moment = require('moment');
 
-    function listRequestHandler(req, res, startTime, endTime) {
+    function listRequestHandler(req, res, startTime, endTime, isGetLatest) {
         var params = req.params,
             result = {
                 status: false,
@@ -24,15 +24,25 @@ module.exports = function (db) {
                 }
             };
 
-        TemperatureDevice.find({
-            deviceName: params.deviceName,
-            timeStamp: {
-                $gte: startTime.toDate(),
-                $lte: endTime.toDate()
-            }
-        })
-            .sort({timeStamp: 1})
-            .exec(callback);
+        if (isGetLatest) {
+            TemperatureDevice.findOne({
+                deviceName: params.deviceName
+            })
+                .sort({timeStamp: 1})
+                .exec(callback);
+
+        } else {
+
+            TemperatureDevice.find({
+                deviceName: params.deviceName,
+                timeStamp: {
+                    $gte: startTime.toDate(),
+                    $lte: endTime.toDate()
+                }
+            })
+                .sort({timeStamp: 1})
+                .exec(callback);
+        }
     }
 
     /* GET users listing. */
@@ -63,6 +73,10 @@ module.exports = function (db) {
             startTime = moment().startOf('hour').subtract(1, 'hours');
 
         listRequestHandler(req, res, startTime, endTime);
+    });
+
+     router.get('/list/current/temperature/:deviceName', function (req, res) {
+        listRequestHandler(req, res, null, null, true);
     });
 
     router.get('/list/current/temperature/hour/:deviceName', function (req, res) {
