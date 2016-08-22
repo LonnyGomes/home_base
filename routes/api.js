@@ -28,7 +28,7 @@ module.exports = function (db) {
             TemperatureDevice.findOne({
                 deviceName: params.deviceName
             })
-                .sort({timeStamp: 1})
+                .sort({timeStamp: -1})
                 .exec(callback);
 
         } else {
