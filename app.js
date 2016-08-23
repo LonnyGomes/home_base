@@ -11,6 +11,10 @@ var routes = require('./routes/index');
 var DB = require('./db/db');
 
 var app = express();
+
+var server = require('http').Server(app);
+var io = require('socket.io')(server);
+
 var dbUrl = 'mongodb://localhost/home_base';
 var db = new DB(dbUrl);
 var api = require('./routes/api')(db);
@@ -69,5 +73,9 @@ var api = require('./routes/api')(db);
         });
     });
 
-    module.exports = app;
+    io.on('connection', function(socket){
+        console.log('a user connected');
+    });
+
+    module.exports = {app: app, server: server};
 }());
