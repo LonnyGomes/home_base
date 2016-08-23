@@ -1,5 +1,5 @@
 /*jslint node: true */
-module.exports = function (db) {
+module.exports = function (db, io) {
     'use strict';
 
     var express = require('express'),
@@ -61,6 +61,12 @@ module.exports = function (db) {
             result.status = true;
             result.msg = 'success';
             res.jsonp(result);
+
+            io.emit('temperatureUpdated', {
+                deviceName: params.name,
+                temperature: params.temperature,
+                humidity: params.humidity
+            });
         }, function (err) {
             result.msg = err;
             console.error('Error saving temp:' + err);
@@ -75,7 +81,7 @@ module.exports = function (db) {
         listRequestHandler(req, res, startTime, endTime);
     });
 
-     router.get('/list/current/temperature/:deviceName', function (req, res) {
+    router.get('/list/current/temperature/:deviceName', function (req, res) {
         listRequestHandler(req, res, null, null, true);
     });
 

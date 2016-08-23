@@ -17,7 +17,7 @@ var io = require('socket.io')(server);
 
 var dbUrl = 'mongodb://localhost/home_base';
 var db = new DB(dbUrl);
-var api = require('./routes/api')(db);
+var api = require('./routes/api')(db, io);
 
 (function () {
     'use strict';
